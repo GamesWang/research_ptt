@@ -1,7 +1,7 @@
 #!/bin/usr/env python
 #-*- coding:utf-8 -*-
 
-import sys
+import sys, os
 sys.path.append('../')
 from common.dbconnect import *
 from common.util import *
@@ -10,9 +10,9 @@ from common.util import *
 RETRY_SLEEP_INTERVAL = 1
 DEFAULT_RETRY_TIMES = 3
 PTT_HOST_URL = 'https://www.ptt.cc'
-PTT_BOARD = 'Food'
+PTT_BOARD = 'EatToDie'
 MENU_PAGE_URL = PTT_HOST_URL + '/bbs/'+ PTT_BOARD +'/index{}.html'
-MAXIMUM_MENU_PAGE = 6000
+MAXIMUM_MENU_PAGE = 1000
 
 # mongoDB
 use_db = client['ptt_' + PTT_BOARD]

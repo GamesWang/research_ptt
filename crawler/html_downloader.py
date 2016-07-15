@@ -23,9 +23,10 @@ class HtmlDownloader(object):
         return None
 
 def main():
-    html_downloader = HtmlDownloader()
-    print(html_downloader.download('https://www.ptt.cc/bbs/Food/index1.html'))
-
+    # html_downloader = HtmlDownloader()
+    # print(html_downloader.download('https://www.ptt.cc/bbs/Food/index1.html'))
+    pass
+    
 if __name__ == '__main__':
     main()
     exit(0)

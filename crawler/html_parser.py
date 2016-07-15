@@ -3,16 +3,28 @@
 from html_downloader import HtmlDownloader
 from module_config import *
 from bs4 import BeautifulSoup
+import threadpool
+from url_manager import *
 
 class PttPostParser(object):
     def __init__(self):
         self.html_downloader = HtmlDownloader()
+        self.counter = 0
+        self.k_count = 0
 
     def get_post_detail_info(self, post_url):
+        self.counter = (self.counter + 1)%1000
         html_text = self.html_downloader.download(post_url)
+        if html_text is None:
+            return None
+        
         post_data = self.parse_post_detail_info(html_text)
         post_detail_infos.insert_one(post_data)
         post_url_infos.update_one({'post_url': post_url},{'$set':{'visited':1}})
+
+        if self.counter == 0:
+            self.k_count += 1
+            print('Get Detail Posts: %d k'%(self.k_count))
 
     def parse_post_detail_info(self, html_text):
         if html_text is None:
@@ -79,10 +91,32 @@ class PttPostParser(object):
 
         return post_info
 
+    def run(self, threadNum=5):
+        print('===================== start run parser() ========================')
+        
+        try:
+            pool = threadpool.ThreadPool(threadNum) 
+            while True:
+                if url_manager.has_new_url():
+                    # detail post extract
+                    post_urls = url_manager.get_batch_new_urls(REQUEST_BATCH_SIZE)
+                    requests = threadpool.makeRequests(self.get_post_detail_info, post_urls)
+                    [pool.putRequest(req) for req in requests]
+                    pool.wait()
+                else:
+                    if not url_manager.refresh_new_and_old_urls():
+                        print('No more new_urls')
+                        break
+        except Exception as e:
+            print('html_parser exception')
+            raise
 def main():
-    post_parser = PttPostParser()
-    data = post_parser.get_post_detail_info('https://www.ptt.cc/bbs/Food/M.1468296379.A.ACF.html')
-    print(data)
+    # post_parser = PttPostParser()
+    # post_parser.run()
+
+    # data = post_parser.get_post_detail_info('https://www.ptt.cc/bbs/Food/M.1468296379.A.ACF.html')
+    # print(data)
+    pass
 
 if __name__ == '__main__':
     main()
