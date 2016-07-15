@@ -13,18 +13,21 @@ class PttPostParser(object):
         self.k_count = 0
 
     def get_post_detail_info(self, post_url):
-        self.counter = (self.counter + 1)%1000
         html_text = self.html_downloader.download(post_url)
         if html_text is None:
             return None
         
         post_data = self.parse_post_detail_info(html_text)
-        post_detail_infos.insert_one(post_data)
-        post_url_infos.update_one({'post_url': post_url},{'$set':{'visited':1}})
+        if post_data is None:
+            return None
 
+        self.counter = (self.counter + 1)%1000
         if self.counter == 0:
             self.k_count += 1
             print('Get Detail Posts: %d k'%(self.k_count))
+        
+        post_detail_infos.insert_one(post_data)
+        post_url_infos.update_one({'post_url': post_url},{'$set':{'visited':1}})
 
     def parse_post_detail_info(self, html_text):
         if html_text is None:

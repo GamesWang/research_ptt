@@ -12,13 +12,16 @@ class LinkExtractor(object):
         self.k_count = 0
 
     def get_menu_page_info(self, menu_page_url):
-        self.counter = (self.counter + 1)%100
+        if menu_page_url is None:
+            return None
+
         downloader = HtmlDownloader()
         html_text = downloader.download(menu_page_url)
 
         if html_text == None:
             return None
 
+        self.counter = (self.counter + 1)%100
         if self.counter == 0:
             self.k_count += 1
             print('Get Manu Pages: %d00'%(self.k_count))
@@ -26,6 +29,9 @@ class LinkExtractor(object):
         return self.parse_menu_page_info(html_text)
 
     def parse_menu_page_info(self, html_text):
+        if html_text is None:
+            return None
+
         soup = BeautifulSoup(html_text, 'lxml')
 
         menu_page_data = []
