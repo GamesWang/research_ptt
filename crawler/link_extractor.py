@@ -2,7 +2,8 @@
 #-*- coding:utf-8 -*-
 from html_downloader import HtmlDownloader
 from url_manager import url_manager
-from config import *
+from module_config import *
+from bs4 import BeautifulSoup
 import threadpool
 
 class LinkExtractor(object):

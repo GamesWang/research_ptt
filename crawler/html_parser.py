@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 from html_downloader import HtmlDownloader
-from config import *
+from module_config import *
+from bs4 import BeautifulSoup
 
 class PttPostParser(object):
     def __init__(self):

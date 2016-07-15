@@ -3,7 +3,7 @@
 
 import requests
 import time
-from config import *
+from module_config import *
 
 class HtmlDownloader(object):
     def download(self, url):

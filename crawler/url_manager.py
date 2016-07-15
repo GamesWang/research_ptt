@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-from config import *
+from module_config import *
 
 class UrlManager(object):
     def __init__(self):

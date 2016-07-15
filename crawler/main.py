@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
+from module_config import *
 from link_extractor import LinkExtractor
 from url_manager import *
 from html_parser import PttPostParser
