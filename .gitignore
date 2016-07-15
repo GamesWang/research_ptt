@@ -1,0 +1,13 @@
+# cache files
+*.log
+*.pyc
+
+# big zips
+*.7z
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
