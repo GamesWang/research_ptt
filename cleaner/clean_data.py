@@ -2,7 +2,7 @@
 #-*- coding:utf-8 -*-
 
 from util import *
-from dbconnect import *
+from module_config import *
 
 def getDataFromDB(outFile, url):
     res = {}
