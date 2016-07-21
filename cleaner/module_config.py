@@ -3,6 +3,6 @@
 
 import sys
 sys.path.append('../')
-from common.dbconnect import *
+from common.common_config import *
 from common.util import *
 
