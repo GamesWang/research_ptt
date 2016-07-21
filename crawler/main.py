@@ -8,6 +8,7 @@ from html_parser import PttPostParser
 import threadpool
 import time
 from multiprocessing import Process
+from util import *
 
 # 可以改一下寫法
 # create process to extract post url
@@ -42,7 +43,9 @@ def main():
     post_parser = PttPostParser()
 
     try:
-        p_link_extractor = Process(target=link_extractor.run, args=(MENU_PAGE_URL, 6000, 5))
+        start_page = 9770
+        end_page = 13175
+        p_link_extractor = Process(target=link_extractor.run, args=(MENU_PAGE_URL, start_page, end_page, 5))
         p_link_extractor.start()
         
         time.sleep(THREAD_REQUEST_SLEEP_INTERVAL)
@@ -54,7 +57,7 @@ def main():
         p_post_parser.join()
 
     except Exception as e:
-        logRecord('[Exception] ' + str(e), 'craw.log')
+        logRecord('[Exception] ' + str(e), 'gossip.craw.log')
         print('[Exception] ' + str(e))
 
 if __name__ == '__main__':

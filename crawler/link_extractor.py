@@ -10,13 +10,13 @@ class LinkExtractor(object):
     def __init__(self):
         self.counter = 0
         self.k_count = 0
+        self.downloader = HtmlDownloader()
 
     def get_menu_page_info(self, menu_page_url):
         if menu_page_url is None:
             return None
 
-        downloader = HtmlDownloader()
-        html_text = downloader.download(menu_page_url)
+        html_text = self.downloader.download(menu_page_url)
 
         if html_text == None:
             return None
@@ -58,20 +58,22 @@ class LinkExtractor(object):
             return PTT_HOST_URL + soup.find_all('a', class_='btn wide', text='下頁 ›')[0].get('href')
         return None
 
-    def run(self, root_menu_page, max_menu_page_index=6000, threadNum=5):
+    def run(self, root_menu_page, min_menu_page_index=1, max_menu_page_index=6000, threadNum=5):
         print('===================== start run extractor() ========================')
         try:
             pool = threadpool.ThreadPool(threadNum) 
             
-            menu_page_urls = [root_menu_page.format(i) for i in range(1, max_menu_page_index)]
+            menu_page_urls = [root_menu_page.format(i) for i in range(min_menu_page_index, max_menu_page_index)]
             requests = threadpool.makeRequests(self.fetch_menu_page_links, menu_page_urls) 
             [pool.putRequest(req) for req in requests] 
-            pool.wait() 
+            pool.wait()
+            print('link extractor done.')
         except:
             print('link_extractor excepttion')
             raise
 def main():
-    # link_extractor = LinkExtractor()
+    link_extractor = LinkExtractor()
+    link_extractor.run('https://www.ptt.cc/bbs/Gossiping/index{}.html', 1,5,1)
 
     # menu_page_urls = ['https://www.ptt.cc/bbs/Food/index{}.html'.format(i) for i in range(1, 6000)]
 
