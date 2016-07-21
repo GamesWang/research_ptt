@@ -7,15 +7,9 @@ from collections import Counter
 from module_config import *
 import re
 import json
-
-jieba.set_dictionary('../resource/dicts/dict.txt.big') # set 繁體辭典
-jieba.load_userdict('../resource/dicts/ptt_words.txt') # load PTT 用語
-jieba.load_userdict('../resource/dicts/restaurant.txt') # load 餐廳名稱
-jieba.load_userdict('../resource/dicts/taiwan_area.txt') # load 台灣地名
-jieba.load_userdict('../resource/dicts/taiwan_words.txt') # load 台灣 words
-jieba.load_userdict('../resource/dicts/taiwan_party.txt') # load 台灣政黨
-jieba.analyse.set_stop_words('../resource/dicts/mystopwords.txt') # set stopwords
-
+from multiprocessing import Pool
+import multiprocessing
+from functools import partial
 # jieba.analyse.set_idf_path(file_name) # set idf
 
 # ret = open("president_speech.txt", "r", encoding='utf-8').read()
@@ -23,17 +17,26 @@ jieba.analyse.set_stop_words('../resource/dicts/mystopwords.txt') # set stopword
 # tags = jieba.analyse.extract_tags(content, 10) # get top 10 tf-idf
 
 # print(' '.join(seglist))
-
 # print(Counter(list(seglist)))
 
-def main():
+def loadDictionaries():
+    jieba.set_dictionary('../resource/dicts/dict.txt.big') # set 繁體辭典
+    jieba.load_userdict('../resource/dicts/ptt_words.txt') # load PTT 用語
+    jieba.load_userdict('../resource/dicts/restaurant.txt') # load 餐廳名稱
+    jieba.load_userdict('../resource/dicts/taiwan_area.txt') # load 台灣地名
+    jieba.load_userdict('../resource/dicts/taiwan_words.txt') # load 台灣 words
+    jieba.load_userdict('../resource/dicts/taiwan_party.txt') # load 台灣政黨
+    jieba.analyse.set_stop_words('../resource/dicts/mystopwords.txt') # set stopwords
 
+def segmentation(offset, limit):
+    loadDictionaries()
+    DBCursor = post_detail_infos.find({'segmented':{'$ne':1}}).skip(offset).limit(limit)
     parsed_count = 0
     k_count = 0
     ip_pat = re.compile('.+From: (((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*')
 
     # {'segmented_title_and_body':{'$in':[None]}}
-    for doc in post_detail_infos.find():
+    for doc in DBCursor:
         parsed_count = (parsed_count + 1)%1000
         if parsed_count == 0:
             k_count += 1
@@ -72,6 +75,19 @@ def main():
             print('[Exception] post_url: ' + doc['post_url'] + str(e))
             logRecord('[Exception] post_url: ' + doc['post_url'] + str(e), 'segment.gossip.log')
 
+def main():
+    num_process = 4
+    pool = Pool(num_process)
+
+    num_post = post_detail_infos.find({'segmented':{'$ne':1}}).count()
+    print('Number to segment: ' + str(num_post))
+
+    batch_size = int(num_post/num_process)
+    print('Batch size: ' + str(batch_size))
+    args = [(idx*batch_size, (idx+1)*batch_size) for idx in range(num_process)]
+    pool.starmap(segmentation, args)
+    pool.close()
+    pool.join()
 
 if __name__ == '__main__':
     main()
