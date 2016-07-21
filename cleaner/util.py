@@ -2,7 +2,7 @@
 import re
 import datetime
 import time
-from dbconnect import *
+from module_config import *
 
 def logRecord(msg, logFile):
     with open(logFile, 'a') as f:

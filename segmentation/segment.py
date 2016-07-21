@@ -8,10 +8,10 @@ from module_config import *
 import re
 import json
 
-jieba.set_dictionary('./dicts/dict.txt.big') # set 繁體辭典
-jieba.load_userdict('./dicts/ptt_words.txt') # load PTT 用語
-jieba.load_userdict('./dicts/restaurant.txt') # load 餐廳名稱
-jieba.analyse.set_stop_words('./dicts/mystopwords.txt') # set stopwords
+jieba.set_dictionary('../resource/dicts/dict.txt.big') # set 繁體辭典
+jieba.load_userdict('../resource/dicts/ptt_words.txt') # load PTT 用語
+jieba.load_userdict('../resource/dicts/restaurant.txt') # load 餐廳名稱
+jieba.analyse.set_stop_words('../resource/dicts/mystopwords.txt') # set stopwords
 
 # jieba.analyse.set_idf_path(file_name) # set idf
 
