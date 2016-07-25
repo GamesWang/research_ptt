@@ -9,7 +9,6 @@ import re
 import json
 from multiprocessing import Pool
 import multiprocessing
-from functools import partial
 # jieba.analyse.set_idf_path(file_name) # set idf
 
 # ret = open("president_speech.txt", "r", encoding='utf-8').read()
